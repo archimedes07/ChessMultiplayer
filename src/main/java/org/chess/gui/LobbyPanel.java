@@ -1,4 +1,6 @@
-package org.chess;
+package org.chess.gui;
+
+import org.chess.networking.Client;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;

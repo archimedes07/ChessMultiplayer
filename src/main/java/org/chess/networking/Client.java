@@ -1,4 +1,7 @@
-package org.chess;
+package org.chess.networking;
+
+import org.chess.core.Board;
+import org.chess.gui.MainFrame;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -11,7 +14,6 @@ public class Client {
 	private final ObjectInputStream ois;
 	private final ObjectOutputStream oos;
 	private final MainFrame mainFrame;
-	private String currentSessionId;
 
 	public Client() throws IOException {
 		this.socket = new Socket("localhost", 7331);
@@ -22,10 +24,13 @@ public class Client {
 		Thread receiverThread = new Thread(() ->{
 			try {
 				while (true) {
-					String message = (String) ois.readObject();
-					if (message.equals(Util.GAME_START_MESSAGE)){
-						currentSessionId = (String) ois.readObject();
-						System.out.println("new Session: " + currentSessionId);
+					Object obj = ois.readObject();
+
+					if (obj instanceof Board){
+						Board board = (Board) obj;
+						System.out.println(board);
+						mainFrame.updateBoard(board);
+						mainFrame.showBoard();
 					}
 				}
 			}catch (IOException | ClassNotFoundException e){
@@ -36,9 +41,9 @@ public class Client {
 		receiverThread.start();
 	}
 
-	public void makeMove(int fromX, int toX, int fromY, int toY, int sessionId){
+	public void makeMove(int fromX, int toX, int fromY, int toY){
 		try {
-			oos.writeObject(String.format(Util.MOVE_REQUEST_PATTERN, fromX, toX, fromY, toY));
+			oos.writeObject(String.format(NetUtils.MOVE_REQUEST_FORM, fromX, toX, fromY, toY));
 			oos.flush();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -47,7 +52,7 @@ public class Client {
 
 	public int[][] getBoardFromServer(){
 		try {
-			oos.writeObject(Util.GET_BOARD_MESSAGE);
+			oos.writeObject(NetUtils.UPDATE_BOARD_MESSAGE);
 			oos.flush();
 			return (int[][]) ois.readObject();
 		}catch (IOException | ClassNotFoundException e) {
@@ -57,7 +62,7 @@ public class Client {
 
 	public void requestMatchmaking(){
 		try {
-			oos.writeObject(Util.MATCHMAKING_REQUEST_MESSAGE);
+			oos.writeObject(NetUtils.MATCHMAKING_REQUEST_MESSAGE);
 			oos.flush();
 		} catch (IOException e) {
 			throw new RuntimeException(e);

@@ -1,31 +1,33 @@
-package org.chess;
+package org.chess.gui;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Image;
+import org.chess.core.Board;
+import org.chess.core.Piece;
+import org.chess.networking.Client;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import javax.imageio.ImageIO;
-import javax.swing.JPanel;
 
 public class BoardPanel extends JPanel implements MouseListener {
 
     private static final Color WHITE_SQUARE_COLOR = new Color(235, 236 ,208);
     private static final Color BLACK_SQUARE_COLOR = new Color(115, 149 ,82);
 
-    private final Map<Integer, Image> imageCache = new HashMap<>();
-    private final int[][] board;
+    private final Map<String, Image> imageCache = new HashMap<>();
+    private Board board;
     private int selectedX, selectedY;
+    private Client client;
 
-    public BoardPanel(int[][] board, Client client){
-        this.board = board;
+    public BoardPanel(Client client){
         this.selectedX = -1;
         this.selectedY = -1;
+        this.client = client;
         addMouseListener(this);
         setPreferredSize(new Dimension(700, 700));
         loadImages();
@@ -35,8 +37,14 @@ public class BoardPanel extends JPanel implements MouseListener {
     @Override
     public void paintComponent(Graphics g){
         super.paintComponents(g);
-        drawSquares(g);
-        drawPieces(g);
+        if (board != null) {
+            System.out.println("Drawing");
+            drawSquares(g);
+            drawPieces(g);
+        }
+        else{
+            System.out.println("not drawing");
+        }
     }
 
     public Image loadImage(String path){
@@ -48,20 +56,19 @@ public class BoardPanel extends JPanel implements MouseListener {
     }
 
     private void loadImages() {
-        imageCache.put(Util.KING_WHITE_ID, loadImage("images/king_white.png"));
-        imageCache.put(Util.QUEEN_WHITE_ID, loadImage("images/queen_white.png"));
-        imageCache.put(Util.ROOK_WHITE_ID, loadImage("images/rook_white.png"));
-        imageCache.put(Util.BISHOP_WHITE_ID, loadImage("images/bishop_white.png"));
-        imageCache.put(Util.KNIGHT_WHITE_ID, loadImage("images/knight_white.png"));
-        imageCache.put(Util.PAWN_WHITE_ID, loadImage("images/pawn_white.png"));
+        imageCache.put("king_white", loadImage("images/king_white.png"));
+        imageCache.put("queen_white", loadImage("images/queen_white.png"));
+        imageCache.put("rook_white", loadImage("images/rook_white.png"));
+        imageCache.put("bishop_white", loadImage("images/bishop_white.png"));
+        imageCache.put("knight_white", loadImage("images/knight_white.png"));
+        imageCache.put("pawn_white", loadImage("images/pawn_white.png"));
 
-        imageCache.put(Util.KING_BLACK_ID, loadImage("images/king_black.png"));
-        imageCache.put(Util.QUEEN_BLACK_ID, loadImage("images/queen_black.png"));
-        imageCache.put(Util.ROOK_BLACK_ID, loadImage("images/rook_black.png"));
-        imageCache.put(Util.BISHOP_BLACK_ID, loadImage("images/bishop_black.png"));
-        imageCache.put(Util.KNIGHT_BLACK_ID, loadImage("images/knight_black.png"));
-        imageCache.put(Util.PAWN_BLACK_ID, loadImage("images/pawn_black.png"));
-
+        imageCache.put("king_black", loadImage("images/king_black.png"));
+        imageCache.put("queen_black", loadImage("images/queen_black.png"));
+        imageCache.put("rook_black", loadImage("images/rook_black.png"));
+        imageCache.put("bishop_black", loadImage("images/bishop_black.png"));
+        imageCache.put("knight_black", loadImage("images/knight_black.png"));
+        imageCache.put("pawn_black", loadImage("images/pawn_black.png"));
     }
 
     public int getSquareWidth(){
@@ -70,6 +77,10 @@ public class BoardPanel extends JPanel implements MouseListener {
 
     public int getSquareHeight(){
         return getHeight()/8;
+    }
+
+    public void setBoard(Board board) {
+        this.board = board;
     }
 
     public void drawLines(Graphics g){
@@ -104,9 +115,10 @@ public class BoardPanel extends JPanel implements MouseListener {
         int height = getSquareHeight();
         for (int y = 0; y<8; y++){
             for (int x = 0; x<8; x++){
-                int piece = board[y][x];
-                if (piece != 0){
-                    Image image = imageCache.get(piece);
+                Piece piece = board.getPieces()[y][x];
+                if (piece != null){
+                    String type = piece.getType();
+                    Image image = imageCache.get(type);
                     g.drawImage(image, x*width, y*height, width, height, null);
                 }
             }
@@ -126,7 +138,7 @@ public class BoardPanel extends JPanel implements MouseListener {
             selectedY = squareY;
         }
         else{
-            Game.makeMove(selectedX, squareX, selectedY, squareY, board);
+            client.makeMove(selectedX, squareX, selectedY, squareY);
             selectedX = -1;
             selectedY = -1;
         }

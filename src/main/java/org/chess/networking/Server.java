@@ -1,4 +1,4 @@
-package org.chess;
+package org.chess.networking;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -43,20 +43,43 @@ public class Server {
 			ClientHandler client2 = matchmakingQueue.poll();
 
 			if (client1 != null && client2 != null) {
-				Session session = new Session();
+				Session session = new Session(client1, client2);
+				System.out.println("session created: " + session.getId());
+
 				sessions.put(session.getId(), session);
 				clientSessionMap.put(client1, session.getId());
 				clientSessionMap.put(client2, session.getId());
-				client1.getOos().writeObject(Util.GAME_START_MESSAGE);
-				client2.getOos().flush();
-				client1.getOos().writeObject(session.getId());
-				client2.getOos().flush();
 
-				client2.getOos().writeObject(Util.GAME_START_MESSAGE);
+				client1.setCurrentSessionId(session.getId());
+				client2.setCurrentSessionId(session.getId());
+
+				client1.getOos().writeObject(session.getBoard());
+				client1.getOos().flush();
+				client1.getOos().reset();
+				client2.getOos().writeObject(session.getBoard());
 				client2.getOos().flush();
-				client2.getOos().writeObject(session.getId());
-				client2.getOos().flush();
+				client2.getOos().reset();
 			}
+		}
+	}
+
+	public void makeMove(int fromX, int toX, int fromY, int toY, String sessionId, ClientHandler callingClient){
+		Session session = sessions.get(sessionId);
+		if (session.makeMove(fromX, toX, fromY, toY, callingClient)){
+			sendBoardUpdate(session);
+		}
+	}
+
+	public void sendBoardUpdate(Session session){
+		try {
+			session.getClient1().getOos().writeObject(session.getBoard());
+			session.getClient1().getOos().flush();
+			session.getClient1().getOos().reset();
+			session.getClient2().getOos().writeObject(session.getBoard());
+			session.getClient2().getOos().flush();
+			session.getClient2().getOos().reset();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		}
 	}
 
