@@ -2,7 +2,7 @@ package org.chess.gui;
 
 import org.chess.core.Board;
 import org.chess.core.Piece;
-import org.chess.networking.Client;
+import org.chess.Client;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -20,9 +20,10 @@ public class BoardPanel extends JPanel implements MouseListener {
     private static final Color BLACK_SQUARE_COLOR = new Color(115, 149 ,82);
 
     private final Map<String, Image> imageCache = new HashMap<>();
-    private Board board;
     private int selectedX, selectedY;
-    private Client client;
+    private final Client client;
+
+    private Board board;
 
     public BoardPanel(Client client){
         this.selectedX = -1;

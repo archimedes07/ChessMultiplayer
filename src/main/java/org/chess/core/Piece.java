@@ -33,15 +33,15 @@ public abstract class Piece implements Serializable {
             return false;
         }
 
-        Piece start = board.getPieces()[fromY][fromX];
-        Piece end = board.getPieces()[toY][toX];
+        Piece movingPiece = board.getPieces()[fromY][fromX];
+        Piece targetPiece = board.getPieces()[toY][toX];
 
-        if (start == null){
+        if (movingPiece == null){
             return false;
         }
 
-        if (end != null) {
-            if (start.getPlayer() == end.getPlayer()) {
+        if (targetPiece != null) {
+            if (movingPiece.getPlayer() == targetPiece.getPlayer()) {
                 return false;
             }
         }

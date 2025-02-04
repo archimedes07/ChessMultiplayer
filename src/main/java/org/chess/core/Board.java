@@ -34,6 +34,14 @@ public class Board implements Serializable {
         return currentPlayer;
     }
 
+    public Piece[][] getPieces() {
+        return pieces;
+    }
+
+    public Piece getPiece(int x, int y){
+        return pieces[y][x];
+    }
+
     public void initializeBoard(){
         currentPlayer = Player.WHITE;
         pieces = new Piece[8][8];
@@ -60,14 +68,6 @@ public class Board implements Serializable {
         pieces[7][5] = new Bishop(Player.WHITE);
         pieces[7][6] = new Knight(Player.WHITE);
         pieces[7][7] = new Rook(Player.WHITE);
-    }
-
-    public Piece[][] getPieces() {
-        return pieces;
-    }
-
-    public Piece getPiece(int x, int y){
-        return pieces[y][x];
     }
 
     public boolean isCheckmate() {
@@ -312,22 +312,22 @@ public class Board implements Serializable {
         if (piece instanceof Bishop) return piece.getPlayer() == Player.WHITE ? 'B' : 'b';
         if (piece instanceof Knight) return piece.getPlayer() == Player.WHITE ? 'N' : 'n';
         if (piece instanceof Pawn) return piece.getPlayer() == Player.WHITE ? 'P' : 'p';
-        return '?'; // Falls eine unbekannte Figur vorkommt
+        return '?';
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("  a b c d e f g h\n"); // Spaltenbeschriftung
+        sb.append("  a b c d e f g h\n");
         sb.append("  ----------------\n");
 
         for (int y = 0; y < 8; y++) {
-            sb.append((8 - y)).append("|"); // Zeilenbeschriftung
+            sb.append((8 - y)).append("|");
 
             for (int x = 0; x < 8; x++) {
                 Piece piece = pieces[y][x];
                 if (piece == null) {
-                    sb.append(" ."); // Leeres Feld
+                    sb.append(" .");
                 } else {
                     sb.append(" ").append(getSymbol(piece));
                 }

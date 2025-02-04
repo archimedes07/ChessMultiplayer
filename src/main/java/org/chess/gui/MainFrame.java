@@ -1,17 +1,17 @@
 package org.chess.gui;
 
 import org.chess.core.Board;
-import org.chess.networking.Client;
+import org.chess.Client;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class MainFrame extends JFrame {
 
-    private LobbyPanel lobbyPanel;
-    private BoardPanel boardPanel;
-    private JPanel cardPanel;
-    private CardLayout cardLayout;
+    private final LobbyPanel lobbyPanel;
+    private final BoardPanel boardPanel;
+    private final JPanel cardPanel;
+    private final CardLayout cardLayout;
 
     public MainFrame(Client client) {
         setTitle("Chess");

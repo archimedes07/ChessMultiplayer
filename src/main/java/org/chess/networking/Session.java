@@ -7,21 +7,28 @@ import java.util.UUID;
 
 public class Session {
 
-	private Board board;
-	private String id;
-	private ClientHandler white;
-	private ClientHandler black;
-	private ClientHandler client1;
-	private ClientHandler client2;
+	private final Board board;
+	private final String id;
+	private final ClientHandler white;
+	private final ClientHandler black;
+	private final ClientHandler client1;
+	private final ClientHandler client2;
 
 	public Session(ClientHandler client1, ClientHandler client2){
 		System.out.println("session created");
 		this.id = UUID.randomUUID().toString();
 		this.board = new Board();
-		this.white = client1;
-		this.black = client1;
 		this.client1 = client1;
 		this.client2 = client2;
+
+		if (Math.random() > 0.5){
+			this.white = client1;
+			this.black = client2;
+		}
+		else{
+			this.white = client2;
+			this.black = client1;
+		}
 	}
 
 	public Board getBoard() {
@@ -44,7 +51,7 @@ public class Session {
 		if (board.getCurrentPlayer() == Player.WHITE && callingClient == black){
 			return false;
 		}
-		if (board.getCurrentPlayer() == Player.WHITE && callingClient == white){
+		if (board.getCurrentPlayer() == Player.BLACK && callingClient == white){
 			return false;
 		}
 		return board.makeMove(fromX, toX, fromY, toY);

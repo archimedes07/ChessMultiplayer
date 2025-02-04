@@ -1,4 +1,7 @@
-package org.chess.networking;
+package org.chess;
+
+import org.chess.networking.ClientHandler;
+import org.chess.networking.Session;
 
 import java.io.IOException;
 import java.net.ServerSocket;

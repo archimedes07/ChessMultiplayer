@@ -1,7 +1,5 @@
 package org.chess.core;
 
-import java.io.Serializable;
-
-public enum Player implements Serializable {
+public enum Player{
     WHITE, BLACK
 }

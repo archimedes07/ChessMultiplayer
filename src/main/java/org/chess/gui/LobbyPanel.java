@@ -1,6 +1,6 @@
 package org.chess.gui;
 
-import org.chess.networking.Client;
+import org.chess.Client;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -9,17 +9,10 @@ import javax.swing.JPanel;
 
 public class LobbyPanel extends JPanel {
 
-	private final Client client;
-
 	public LobbyPanel(Client client){
-		this.client = client;
 		setPreferredSize(new Dimension(700, 700));
 		JButton playButton = new JButton("Play");
-		playButton.addActionListener(
-				e -> {
-					client.requestMatchmaking();
-				}
-		);
+		playButton.addActionListener(e -> client.requestMatchmaking());
 		setLayout(new BorderLayout());
 		add(playButton, BorderLayout.CENTER);
 	}

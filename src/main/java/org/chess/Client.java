@@ -1,7 +1,8 @@
-package org.chess.networking;
+package org.chess;
 
 import org.chess.core.Board;
 import org.chess.gui.MainFrame;
+import org.chess.networking.NetUtils;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
