@@ -1,4 +1,4 @@
-package org.chess;
+package org.chess.networking;
 
 import org.chess.core.Board;
 import org.chess.gui.MainFrame;
@@ -16,8 +16,8 @@ public class Client {
 	private final ObjectOutputStream oos;
 	private final MainFrame mainFrame;
 
-	public Client() throws IOException {
-		this.socket = new Socket("localhost", 7331);
+	public Client(String host, int port) throws IOException {
+		this.socket = new Socket(host, port);
 		this.oos = new ObjectOutputStream(socket.getOutputStream());
 		this.ois = new ObjectInputStream(socket.getInputStream());
 		this.mainFrame = new MainFrame(this);
@@ -70,7 +70,4 @@ public class Client {
 		}
 	}
 
-	public static void main(String[] args) throws IOException, ClassNotFoundException {
-		Client client = new Client();
-	}
 }

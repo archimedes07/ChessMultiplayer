@@ -2,7 +2,7 @@ package org.chess.gui;
 
 import org.chess.core.Board;
 import org.chess.core.Piece;
-import org.chess.Client;
+import org.chess.networking.Client;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

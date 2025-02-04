@@ -1,7 +1,7 @@
 package org.chess.gui;
 
 import org.chess.core.Board;
-import org.chess.Client;
+import org.chess.networking.Client;
 
 import javax.swing.*;
 import java.awt.*;
